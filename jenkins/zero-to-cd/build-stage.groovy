@@ -1,7 +1,7 @@
 agent {
   docker {
     image 'maven:3-alpine'
-    args '-v /home/jenkins/docker/.m2:/root/.m2'
+    args '-v $HOME/jenkins/blueocean-host/.m2:/root/.m2:z -u root'
   }
 }
 
