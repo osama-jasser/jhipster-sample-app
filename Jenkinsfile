@@ -1,10 +1,17 @@
 pipeline {
-  agent any
+  agent {
+    docker {
+      image 'maven:3-alpine'
+      args '-v $HOME/jenkins/blueocean-host/.m2:/root/.m2:z -u root'
+    }
+
+  }
   stages {
     stage('Build') {
       agent any
       steps {
-        sh 'env '
+        sh 'mvn -B -DskipTests clean package'
+        stash(name: 'war', includes: 'target/**')
       }
     }
     stage('Backend') {
