@@ -1,19 +1,30 @@
-agent {
-  docker {
-    image 'maven:3-alpine'
-    args '-v /home/bitwiseman/docker/.m2:/root/.m2'
+parallel {
+  stage('Unit') {
+    agent {
+      docker {
+        image 'maven:3-alpine'
+        args '-v $HOME/jenkins/blueocean-host/.m2:$HOME/.m2:z -u root'
+      }
+
+    }
+    steps {
+      unstash 'war'
+      sh 'mvn -B -DtestFailureIgnore test || exit 0'
+      junit '**/surefire-reports/**/*.xml'
+    }
+  }
+  stage('Performance') {
+    agent {
+      docker {
+        image 'maven:3-alpine'
+        args '-v $HOME/jenkins/blueocean-host/.m2:/root/.m2:z -u root'
+      }
+
+    }
+    steps {
+      unstash 'war'
+      sh '# ./mvn -B gatling:execute'
+    }
   }
 }
 
-steps {
-  parallel(
-   'Unit' : {
-     unstash 'war'
-     sh 'mvn -B -Dmaven.test.failure.ignore=true test || exit 0'
-     junit '**/surefire-reports/**/*.xml'
-    },
-    'Performance' : {
-      unstash 'war'
-      sh '# ./mvn -B gatling:execute'
-   })
- }

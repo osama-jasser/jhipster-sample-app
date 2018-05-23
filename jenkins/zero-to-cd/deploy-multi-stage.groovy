@@ -6,9 +6,11 @@ stage('Deploy to Staging') {
 }
 
 stage('Deploy to Production') {
+  input {
+    message 'Deploy to production?'
+    ok 'Fire away!'
+  }
   steps {
-    input message: 'Deploy to production?',
-               ok: 'Fire away!'
     sh './deploy.sh production'
     sh 'echo Notifying the Team!'
   }
