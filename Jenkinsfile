@@ -64,8 +64,17 @@ pipeline {
       }
     }
     stage('Deploy') {
-      steps {
-        sh 'env'
+      parallel {
+        stage('Deploy') {
+          steps {
+            sh 'env'
+          }
+        }
+        stage('hi') {
+          steps {
+            echo 'hiiii'
+          }
+        }
       }
     }
   }
